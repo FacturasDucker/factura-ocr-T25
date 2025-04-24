@@ -19,7 +19,7 @@ class Settings:
     AWS_REGION: str = os.environ.get("AWS_REGION", "us-west-2")
     
     # App Settings
-    PORT: int = int(os.environ.get("PORT", 8000))
+    PORT: int = int(os.environ.get("PORT", 5000))
     HOST: str = os.environ.get("HOST", "0.0.0.0")
     DEBUG: bool = os.environ.get("DEBUG", "False").lower() == "true"
     
