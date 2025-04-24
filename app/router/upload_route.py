@@ -22,15 +22,13 @@ async def upload_ticket(
     credentials_valid: bool = Depends(verify_aws_credentials)
 ):
     """
-    Sube una imagen de ticket y extrae información estructurada usando AWS Textract.
-    
-    - **file**: Archivo de imagen del ticket (jpg, png, pdf)
-    - **use_analyze_expense**: Si es True, usa AnalyzeExpense de Textract (mejor para tickets pero más costoso)
-    - **debug**: Si es True, incluye la respuesta completa de Textract en el resultado
+    - **file**: Image file of the receipt (jpg, png, pdf)
+    - **use_analyze_expense**: If True, uses Textract's AnalyzeExpense (better for receipts but more expensive)
+    - **debug**: If True, includes the full Textract response in the result
     """
+
     start_time = time.time()
     
-    # Verificar tipo de archivo
     if not file.content_type.startswith("image/") and not file.content_type == "application/pdf":
         raise HTTPException(
             status_code=400,
@@ -38,19 +36,19 @@ async def upload_ticket(
         )
     
     try:
-        # Leer contenido del archivo
+        
         contents = await file.read()
         
         if use_analyze_expense:
-            # Usar AnalyzeExpense (específico para recibos)
+            # Use AnalyzeExpense 
             parsed_data, raw_text, textract_response, confidence_scores = process_receipt_with_textract(
                 contents, debug=debug
             )
         else:
-            # Usar DetectDocumentText (más económico)
+            # Use DetectDocumentText (most economic)
             raw_text, textract_response = extract_text_with_textract(contents)
             
-            # Extraer datos básicos del texto
+            # Extract data basic of text
             parsed_data = TicketData(
                 date=extract_date_from_text(raw_text),
                 business_name=extract_business_name(raw_text),
@@ -61,7 +59,7 @@ async def upload_ticket(
         
         processing_time = time.time() - start_time
         
-        # Preparar información de debug
+        # Prepare debug information
         debug_info = None
         if debug:
             debug_info = DebugInfo(
@@ -86,7 +84,7 @@ async def upload_ticket(
         return TickeResponse(**response_data)
     
     except Exception as e:
-        # Capturar y devolver errores específicos de AWS
+        # Capture and return specific AWS errors
         error_message = str(e)
         
         if "AccessDeniedException" in error_message:
