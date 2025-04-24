@@ -22,8 +22,7 @@ class Settings:
     PORT: int = int(os.environ.get("PORT", 5000))
     HOST: str = os.environ.get("HOST", "0.0.0.0")
     DEBUG: bool = os.environ.get("DEBUG", "False").lower() == "true"
-    
-    # Validar configuración
+
     def validate(self) -> bool:
         """Valida que la configuración mínima esté presente."""
         required_keys = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
@@ -42,5 +41,5 @@ class Settings:
             f"DEBUG={self.DEBUG})"
         )
 
-# Instancia de configuración para usar en toda la aplicación
+# Configuration instance to be used throughout the application
 settings = Settings()
