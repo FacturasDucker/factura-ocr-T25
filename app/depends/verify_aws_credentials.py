@@ -2,7 +2,6 @@ from app.core.aws_client import textract_client, aws_credentials_valid
 from fastapi import HTTPException
 
 async def verify_aws_credentials():
-    """Verifica que las credenciales AWS sean válidas."""
     if not textract_client:
         raise HTTPException(
             status_code=500,
