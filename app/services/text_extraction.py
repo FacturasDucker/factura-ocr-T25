@@ -3,12 +3,12 @@ from app.models import TicketData,Item
 
 
 def extract_text_with_textract(file_bytes):
-    """Extrae texto plano de un documento usando AWS Textract DetectDocumentText."""
+    """Extracts plain text from a document using AWS Textract DetectDocumentText."""
     response = textract_client.detect_document_text(
         Document={'Bytes': file_bytes}
     )
     
-    # Extraer texto
+    # Extracts text
     text_lines = []
     for item in response['Blocks']:
         if item['BlockType'] == 'LINE':
