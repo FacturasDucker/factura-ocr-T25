@@ -1,6 +1,6 @@
 import re
 def extract_total_from_text(text: str) -> float:
-    """Extrae el total del texto."""
+
     patterns = [
         r'(?:TOTAL)[:\s]*\$?\s*(\d+[.,]\d{2})',
         r'(?:TOTAL|IMPORTE)[:\s]*MXN\s*(\d+[.,]\d{2})',
