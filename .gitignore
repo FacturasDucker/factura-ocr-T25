@@ -1,0 +1,23 @@
+venv
+__pycache__
+.env
+
+# Cache de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+
+
+# Archivos de configuración del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de pruebas
+.coverage
+.pytest_cache/
+.tox/
