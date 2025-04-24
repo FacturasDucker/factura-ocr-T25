@@ -1,6 +1,6 @@
 import re
 def extract_folio_from_text(text: str) -> str:
-    """Extrae número de folio del texto."""
+    """Extract number of folio"""
     patterns = [
         r'(?:FOLIO|TICKET|NO)[\.:\s#]*([A-Z0-9]+)',
         r'(?:FACTURA|RECIBO)[\.:\s#]*([A-Z0-9]+)'
