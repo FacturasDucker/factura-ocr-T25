@@ -1,5 +1,5 @@
 """
-Módulo para procesar recibos usando AWS Textract AnalyzeExpense.
+Module to process receipts using AWS Textract AnalyzeExpense
 """
 from app.core.aws_client import textract_client
 from app.models import TicketData, Item
@@ -9,25 +9,24 @@ from app.utils import (
     extract_folio_from_text, 
     extract_business_name
 )
-# Importar directamente del módulo text_extraction
 from app.services.text_extraction import extract_text_with_textract
 
 def process_receipt_with_textract(file_bytes, debug=False):
     """Procesa un recibo con AWS Textract para extraer campos estructurados."""
     
-    # Llamar al API específico para recibos
+    # Call the specific API for receipts
     response = textract_client.analyze_expense(
         Document={'Bytes': file_bytes}
     )
     
-    # Inicializar datos
+    # Init data
     parsed_data = TicketData()
     raw_text_lines = []
     confidence_scores = {}
     
-    # Procesar respuesta
+    # Process response
     for document in response.get('ExpenseDocuments', []):
-        # Extraer campos generales (fecha, total, etc.)
+        # Extract general fields (date, total, etc.)
         for field in document.get('SummaryFields', []):
             field_type = field.get('Type', {}).get('Text', '').upper()
             
@@ -35,13 +34,13 @@ def process_receipt_with_textract(file_bytes, debug=False):
                 value = field['ValueDetection'].get('Text', '')
                 confidence = field['ValueDetection'].get('Confidence', 0)
                 
-                # Guardar confianza
+              
                 confidence_scores[field_type] = confidence
                 
-                # Agregar a texto plano
+                
                 raw_text_lines.append(f"{field_type}: {value}")
                 
-                # Procesar campos específicos
+                
                 if field_type == 'TOTAL' and not parsed_data.total:
                     try:
                         parsed_data.total = float(value.replace('$', '').replace(',', ''))
@@ -75,7 +74,7 @@ def process_receipt_with_textract(file_bytes, debug=False):
                 elif field_type == 'PAYMENT_METHOD' and not parsed_data.payment_method:
                     parsed_data.payment_method = value
         
-        # Extraer líneas de items
+        # Extract line items
         items = []
         for group in document.get('LineItemGroups', []):
             for line_item in group.get('LineItems', []):
@@ -112,11 +111,11 @@ def process_receipt_with_textract(file_bytes, debug=False):
                             except ValueError:
                                 pass
                 
-                # Si tenemos al menos descripción y precio, agregar item
+                
                 if 'description' in item_dict and 'price' in item_dict:
                     quantity = item_dict.get('quantity', 1)
                     
-                    # Si tenemos precio total y cantidad > 1, calcular precio unitario
+           
                     unit_price = item_dict.get('unit_price')
                     if not unit_price and quantity > 1 and 'price' in item_dict:
                         unit_price = item_dict['price'] / quantity
@@ -130,14 +129,14 @@ def process_receipt_with_textract(file_bytes, debug=False):
         
         parsed_data.items = items
     
-    # Si no hay texto extraído de los campos, obtener el texto plano general
+
     if not raw_text_lines:
-        # Llamar a DetectDocumentText para obtener texto plano
+
         try:
             general_text, _ = extract_text_with_textract(file_bytes)
             raw_text_lines = general_text.split('\n')
             
-            # Intentar extraer más datos del texto general
+            # Try to extract more data of text
             if not parsed_data.date:
                 parsed_data.date = extract_date_from_text(general_text)
             
